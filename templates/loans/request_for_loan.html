@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p>
+        Dear <b>{{loan_guarantor.guarantor_first_name|capfirst}} {{loan_guarantor.guarantor_last_name|capfirst}}</b>
+    </p> 
+
+    <p>
+        I trust this message finds you well. I am reaching out to request your assistance as a guarantor for a loan application I am pursuing. Your support in this matter would be immensely appreciated.
+    </p>
+    <!--ADD FREECODING BOY STUFF HERE-->
+    <a href="localhost:8000/api/v1/loans/guarantor-decision/{{loan_guarantor.id}}"> Click the link to finish the process of being a guarantor</a> <br>
+
+    <b>{{user.first_name|capfirst }} {{user.last_name|capfirst }}</b>
+</body>
+</html>
