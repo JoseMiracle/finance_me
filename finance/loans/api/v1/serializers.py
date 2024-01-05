@@ -26,7 +26,7 @@ class RequestableLoanAmountSerializer(serializers.ModelSerializer):
         if amount.exists():
             raise serializers.ValidationError({
                 "error": "true",
-                "message": f"amount {attrs["amount"]} exists"
+                "message": f"amount {attrs['amount']} exists"
             })
 
         # if self.context['request'].method == 'POST':
