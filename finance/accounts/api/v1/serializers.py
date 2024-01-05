@@ -47,7 +47,7 @@ class SignUpSerializer(serializers.ModelSerializer):
 
         generated_otp = generate_otp()
         
-        # otp_for_account_activation(user.email, generated_otp)
+        otp_for_account_activation(user.email, generated_otp)
         OTP.objects.create(
             otp=generated_otp, 
             email=validated_data["email"]
@@ -121,11 +121,11 @@ class IntialSignInSerializer(serializers.Serializer):
 
         if user and user.check_password(attrs["password"]):
             generated_otp = generate_otp()
-            # otp_for_sign_in(
-            #     user.email,
-            #     user.username,
-            #     generated_otp,
-            # )
+            otp_for_sign_in(
+                user.email,
+                user.username,
+                generated_otp,
+            )
             user_otp = OTP.objects.filter(email=user.email).first()
             
             if user_otp is not None:
