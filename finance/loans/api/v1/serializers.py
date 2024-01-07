@@ -33,18 +33,18 @@ class RequestableLoanAmountSerializer(serializers.ModelSerializer):
                 "message": f"amount {attrs['amount']} exists"
             })
 
-        if self.context['request'].method == 'POST':
-         user_id = self.context["request"].user.id
-         is_user_staff_or_admin = User.objects.filter(
-            Q(id=user_id, is_staff=True) | Q(id=user_id, is_admin=True)
-            ).first()
-         if is_user_staff_or_admin:
-             return attrs
-         else:
-             raise serializers.ValidationError({
-                "error": "true",
-                "message": "User not authorized"
-            })
+        # if self.context['request'].method == 'POST':
+        #  user_id = self.context["request"].user.id
+        #  is_user_staff_or_admin = User.objects.filter(
+        #     Q(id=user_id, is_staff=True) | Q(id=user_id, is_admin=True)
+        #     ).first()
+        #  if is_user_staff_or_admin:
+        #      return attrs
+        #  else:
+        #      raise serializers.ValidationError({
+        #         "error": "true",
+        #         "message": "User not authorized"
+        #     })
         return attrs
     
 

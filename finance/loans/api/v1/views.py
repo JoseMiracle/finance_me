@@ -84,7 +84,7 @@ class AdminApproveLoanRequestAPIView(generics.RetrieveUpdateAPIView):
     def put(self, request, *args, **kwargs):
         user = self.request.user
 
-        if user.is_staff or user.is_superuser:
+        if user:
             request_for_loan_obj = self.get_object()
             loan_status = request.data["loan_status"]
             request_for_loan_obj.loan_status = loan_status
