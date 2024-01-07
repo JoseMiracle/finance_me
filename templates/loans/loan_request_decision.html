@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Approval/Deletion</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 20px; padding: 20px; background-color: #f4f4f4;">
+
+    <p>
+        Dear <strong>{{ request_for_loan_obj.user.first_name|upper }} {{request_for_loan_obj.user.last_name|upper}},
+    </p> 
+
+    {% if request_for_loan_obj.loan_status == 'approved'%}
+        <p>
+            Your loan request of ₦{{ request_for_loan_obj.amount }} has been <strong style="color: #28a745;" >{{request_for_loan_obj.loan_status|upper}}</strong>.
+        </p>
+    {% else %}
+        <p>
+            Unfortunately, your loan request of ₦{{ request_for_loan_obj.amount }} has been <strong style="color: #dc3545;">{{request_for_loan_obj.loan_status|upper}}</strong>.
+        </p>
+    {% endif %}
+
+    <p>
+        If you have any questions or concerns, please contact our support team.
+    </p>
+
+    <p style="font-weight: bold; color: #007BFF;">Best regards,<br>The Finance Me Team</p>
+
+</body>
+</html>

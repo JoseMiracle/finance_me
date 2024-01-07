@@ -13,6 +13,7 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "cloudinary_storage",
     "cloudinary",
+    "corsheaders"
 ]
 
 

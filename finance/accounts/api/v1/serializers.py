@@ -2,12 +2,13 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from finance.accounts.models import OTP
-from finance.accounts.mails import otp_for_account_activation, otp_for_sign_in
+from finance.accounts.mails import account_activation_mail, sign_in_with_otp_activation_mail
 from finance.accounts.utils import generate_otp
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.db.models import Q
 from django.utils import timezone
 from finance.accounts import constansts
+
 
 User = get_user_model()
 
@@ -46,11 +47,11 @@ class SignUpSerializer(serializers.ModelSerializer):
         user.save()
 
         generated_otp = generate_otp()
-        
-        otp_for_account_activation(user.email, generated_otp)
+        full_name = f"{user.first_name} {user.last_name}"
+        account_activation_mail(user.email, generated_otp, full_name)
         OTP.objects.create(
-            otp=generated_otp, 
-            email=validated_data["email"]
+            otp=generated_otp,
+            user=user
             )
         return user
     
@@ -74,11 +75,13 @@ class VerifyOtpAPISerializer(serializers.Serializer):
 
     def validate(self, attrs):
         user  = User.objects.filter(email=attrs["email"]).first()
-
+        
         user_otp = OTP.objects.filter(
             otp=attrs["otp"],
-            email=attrs["email"]
-            )
+            user=user
+            ).first()
+    
+        period_of_user_otp = (timezone.now() - user_otp.time_created).total_seconds()
         
         if user is None:
             raise serializers.ValidationError({
@@ -86,13 +89,21 @@ class VerifyOtpAPISerializer(serializers.Serializer):
                 "message": "user doesn't exist"
             })
         
-        if user and (user_otp.first() is None):
+        if (user and user_otp is None):
             raise serializers.ValidationError({
                 "error": "true",
-                "message": "Otp invalid or doesn't exist" 
+                "message": "OTP doesn't exist" 
             })
         
-        if user and user_otp.exists():
+        if (user and period_of_user_otp > constansts.OTP_TIMEOUT):
+             user_otp.delete()
+             raise serializers.ValidationError({
+                "error": "true",
+                "message": "OTP expired" 
+            })
+        
+
+        if (user and period_of_user_otp <= constansts.OTP_TIMEOUT):
            return attrs
        
 
@@ -106,6 +117,8 @@ class IntialSignInSerializer(serializers.Serializer):
         user = User.objects.filter(
             Q(email=attrs["email_or_username"]) | Q(username=attrs["email_or_username"])
             ).first()
+        generated_otp = generate_otp()
+        full_name = f"{user.first_name} {user.last_name}"
         
         if user is None or user.is_active == False:
             raise serializers.ValidationError({
@@ -116,25 +129,26 @@ class IntialSignInSerializer(serializers.Serializer):
         if user and (user.check_password(attrs["password"]) == False):
             raise serializers.ValidationError({
                 "error": "true",
-                "messsage": "Pls recheck credentials"
+                "messsage": "Invalid Password"
             })
 
         if user and user.check_password(attrs["password"]):
-            generated_otp = generate_otp()
-            otp_for_sign_in(
+            sign_in_with_otp_activation_mail(
                 user.email,
-                user.username,
+                full_name,
                 generated_otp,
             )
-            user_otp = OTP.objects.filter(email=user.email).first()
             
-            if user_otp is not None:
-                user_otp.delete()
-            
-            OTP.objects.create(
-                email=user.email,
-                otp=generated_otp
+            obj, created = OTP.objects.get_or_create(
+               user=user,
+                defaults={
+                    'otp': generated_otp
+                }
             )
+            if obj:
+                obj.otp = generated_otp
+                obj.time_created = timezone.now()
+                obj.save()
             attrs["username"] = user.username
             return attrs
     
@@ -144,13 +158,14 @@ class IntialSignInSerializer(serializers.Serializer):
         return attrs
     
 class FinalSignInSerializer(serializers.Serializer):
-    email = serializers.EmailField()
+    email_or_username = serializers.CharField()
     otp = serializers.CharField(min_length=6)
 
     def validate(self, attrs):
-        user = User.objects.filter(email=attrs['email']).first()
-
-        user_otp = OTP.objects.filter(email=attrs["email"], 
+        user = User.objects.filter(
+            Q(email=attrs["email_or_username"]) | Q(username=attrs["email_or_username"])
+            ).first()
+        user_otp = OTP.objects.filter(user=user, 
                                        otp=attrs["otp"]).first()     
         if (user is None):
             raise serializers.ValidationError(
@@ -161,9 +176,11 @@ class FinalSignInSerializer(serializers.Serializer):
             )
 
         if(user and user_otp):
+            user_otp = OTP.objects.filter(user=user, 
+                                       otp=attrs["otp"]).first()
             period_of_user_otp = (timezone.now() - user_otp.time_created).total_seconds()
             
-            if (period_of_user_otp > constansts.OTP_TIMEOUT) :
+            if (period_of_user_otp >= constansts.OTP_TIMEOUT) :
                 raise serializers.ValidationError({
                     "error": "true",
                     "message": "invalid otp or token expired " 
@@ -171,7 +188,7 @@ class FinalSignInSerializer(serializers.Serializer):
             
             if(period_of_user_otp < constansts.OTP_TIMEOUT):
                 OTP.objects.get(
-                    email=attrs["email"], 
+                    user=user, 
                     otp=attrs["otp"]).delete()
                 return user
         
