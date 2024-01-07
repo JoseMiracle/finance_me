@@ -3,4 +3,4 @@ env
 secret.txt
 db.sqlite3
 media
-__pycache__/*
+*/__pycache__/*
