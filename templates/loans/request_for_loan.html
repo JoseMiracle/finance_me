@@ -3,19 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Guarantor Request</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        p {
+            font-size: 16px;
+            color: #333;
+        }
+
+        b {
+            font-weight: bold;
+        }
+
+        a {
+            display: inline-block;
+            padding: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        a:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <p>
-        Dear <b>{{loan_guarantor.guarantor_first_name|capfirst}} {{loan_guarantor.guarantor_last_name|capfirst}}</b>
+        Dear <b style="color: #007BFF;">{{loan_guarantor.guarantor_first_name|capfirst}} {{loan_guarantor.guarantor_last_name|capfirst}}</b>,
     </p> 
 
     <p>
         I trust this message finds you well. I am reaching out to request your assistance as a guarantor for a loan application I am pursuing. Your support in this matter would be immensely appreciated.
     </p>
-    <!--ADD FREECODING BOY STUFF HERE-->
-    <a href="localhost:8000/api/v1/loans/guarantor-decision/{{loan_guarantor.id}}"> Click the link to finish the process of being a guarantor</a> <br>
 
-    <b>{{user.first_name|capfirst }} {{user.last_name|capfirst }}</b>
+    <a href="http://localhost:8000/api/v1/loans/guarantor-decision/{{loan_guarantor.id}}" style="background-color: #007BFF; color: #fff; padding: 10px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px;">
+        Click the link to finish the process of being a guarantor
+    </a>
+
+    <br>
+    <b>{{user.first_name|capfirst }} {{user.last_name|capfirst }}</b> <br>
+
+
+    <p style="font-weight: bold;">Best regards,<br>The Finance Me Team</p>`
+
 </body>
 </html>

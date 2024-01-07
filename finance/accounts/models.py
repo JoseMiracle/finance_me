@@ -1,3 +1,4 @@
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils import timezone
@@ -62,5 +63,5 @@ class User(AbstractUser):
     
 class OTP(models.Model):
     otp = models.CharField(max_length=10, blank=False, null=False)
-    email = models.EmailField(max_length=60, blank=False, null=False, unique=True)
-    time_created = models.DateTimeField(auto_now=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    time_created = models.DateTimeField(auto_now_add=True)

@@ -6,8 +6,12 @@ from finance.loans.models import (
 )
 from django.contrib.auth import get_user_model
 from django.db import transaction
-from finance.loans.mails import request_for_guarantorship_mail
+from finance.loans.mails import (
+    request_for_guarantorship_mail,
+    guarantor_decision_for_loan_mail
+)
 User = get_user_model()
+from django.db.models import Q
 
 
 class RequestableLoanAmountSerializer(serializers.ModelSerializer):
@@ -29,18 +33,18 @@ class RequestableLoanAmountSerializer(serializers.ModelSerializer):
                 "message": f"amount {attrs['amount']} exists"
             })
 
-        # if self.context['request'].method == 'POST':
-        #  user_id = self.context["request"].user.id
-        #  is_user_staff_or_admin = User.objects.filter(
-        #     Q(id=user_id, is_staff=True) | Q(id=user_id, is_admin=True)
-        #     ).first()
-        #  if is_user_staff_or_admin:
-        #      return attrs
-        #  else:
-        #      raise serializers.ValidationError({
-        #         "error": "true",
-        #         "message": "User not authorized"
-        #     })
+        if self.context['request'].method == 'POST':
+         user_id = self.context["request"].user.id
+         is_user_staff_or_admin = User.objects.filter(
+            Q(id=user_id, is_staff=True) | Q(id=user_id, is_admin=True)
+            ).first()
+         if is_user_staff_or_admin:
+             return attrs
+         else:
+             raise serializers.ValidationError({
+                "error": "true",
+                "message": "User not authorized"
+            })
         return attrs
     
 
@@ -53,6 +57,9 @@ class RequestableLoanAmountSerializer(serializers.ModelSerializer):
     
 class GuarantorSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(write_only=True)
+    image = serializers.ImageField(required=False)
+    occupation = serializers.CharField(required=False)
+
     
     class Meta:
         model = LoanGuarantor
@@ -87,7 +94,7 @@ class GuarantorSerializer(serializers.ModelSerializer):
 
 class RequestForLoanSerializer(serializers.ModelSerializer):
     guarantors = serializers.ListSerializer(
-        child=GuarantorSerializer(), required=True
+        child=GuarantorSerializer(),
     )
     class Meta:
         model = RequestForLoan
@@ -142,17 +149,21 @@ class RequestForLoanSerializer(serializers.ModelSerializer):
 
 
 class GuarantorDecisonSerializer(serializers.ModelSerializer):
-    # image = serializers.ImageField(required=True)
+    image = serializers.ImageField(required=True)
     guarantor_nin = serializers.CharField(required=True, write_only=True)
     earning_per_month = serializers.CharField(required=True)
     occupation = serializers.CharField(required=True)
     guarantor_status = serializers.CharField(required=True)
+    guarantor_first_name = serializers.ReadOnlyField()
+    guarantor_last_name = serializers.ReadOnlyField()
+
     class Meta:
         model = LoanGuarantor
         fields = [
+            'id',
             'guarantor_first_name',
             'guarantor_last_name',
-            # 'image',
+            'image',
             'guarantor_nin',
             'earning_per_month',
             'occupation',
@@ -160,8 +171,14 @@ class GuarantorDecisonSerializer(serializers.ModelSerializer):
         ]
 
 
+    @transaction.atomic
     def update(self, instance, validated_data):
-        return super().update(instance, validated_data)
+        data = super().update(instance, validated_data)
+        print(instance.guarantor_first_name)
+        requestor_full_name = f"{data.request_for_loan.user.first_name} {data.request_for_loan.user.last_name}"
+        loan_amount = data.request_for_loan.amount
+        guarantor_decision_for_loan_mail(requestor_full_name, instance, loan_amount)
+        return data
     
     def to_representation(self, instance):
         if self.context['request'].method == 'GET':
@@ -172,17 +189,3 @@ class GuarantorDecisonSerializer(serializers.ModelSerializer):
             return data
         return super().to_representation(instance)
 
-
-class AdminApproveLoanSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = RequestForLoan
-        fields = [
-            'guarantors',
-            'loan_status',
-            'amount',
-        ]
-
-    
-    def update(self, instance, validated_data):
-        return super().update(instance, validated_data)

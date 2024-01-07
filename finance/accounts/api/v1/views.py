@@ -33,7 +33,7 @@ class VerifyOtpAPIView(generics.GenericAPIView):
         user.is_active = True
         user.save()
         OTP.objects.get(otp=serializer.validated_data["otp"],
-                        email=serializer.validated_data["email"]
+                        user=user
                         ).delete()
         return Response({
             "message": "account activated"

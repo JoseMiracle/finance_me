@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Me - Guarantor Notification</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 20px; padding: 20px; background-color: #f4f4f4;">
+
+    <p>
+        Dear <strong>{{guarantor.guarantor_first_name|capfirst}} {{guarantor.guarantor_last_name|capfirst}}</strong>,
+    </p> 
+
+    {% if guarantor.guarantor_status == 'accept' %}
+        <p>
+            You have <strong style="color: #28a745;">{{guarantor.guarantor_status}}ed</strong> the request of being a guarantor for <strong style="text-transform: uppercase; color: black;">{{requestor_full_name}}</strong>'s loan of ₦{{loan_amount}}
+        </p>
+    {% elif guarantor.guarantor_status == 'reject' %}
+        <p>
+            You have <strong style="color: #dc3545;">{{guarantor.guarantor_status}}ed</strong> the request of being a guarantor for <strong style="text-transform: uppercase; color: black;">{{requestor_full_name}}</strong>'s loan of ₦{{loan_amount}}
+        </p>
+    {% endif %}
+
+    <p style="font-weight: bold; color: #007BFF;">Best regards,<br>The Finance Me Team</p>
+
+</body>
+</html>
