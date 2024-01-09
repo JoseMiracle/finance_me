@@ -1,15 +1,16 @@
 from django.shortcuts import render
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, serializers
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from finance.accounts.models import OTP
-
+from django.shortcuts import redirect, HttpResponseRedirect
+from django.views import View
 
 User = get_user_model()
 
 from finance.accounts.api.v1.serializers import (
     SignUpSerializer, 
-    VerifyOtpAPISerializer,
+    VerifyAccountSerializer,
     IntialSignInSerializer,
     FinalSignInSerializer
 )
@@ -22,24 +23,19 @@ class SignUpAPIView(generics.CreateAPIView):
         return super().post(request, *args, **kwargs)
 
 
-class VerifyOtpAPIView(generics.GenericAPIView):
-    serializer_class = VerifyOtpAPISerializer
+class VerifyAccountAPIView(generics.GenericAPIView):
+    serializer_class = VerifyAccountSerializer
     permission_classes = [permissions.AllowAny]
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = User.objects.get(email=serializer.validated_data["email"])
-        user.is_active = True
-        user.save()
-        OTP.objects.get(otp=serializer.validated_data["otp"],
-                        user=user
-                        ).delete()
-        return Response({
-            "message": "account activated"
-        })
 
-
+    def get(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=self.kwargs, context={"uid": kwargs["uidb64"], "token": kwargs["token"]})       
+        try:
+            serializer.is_valid(raise_exception=True)
+        except serializers.ValidationError as e:
+                return redirect("invalid_link") 
+            
+        return HttpResponseRedirect("https://www.google.com/")  
 
 class IntialSignInAPIView(generics.GenericAPIView):
     permission_classes = [permissions.AllowAny,]
@@ -63,3 +59,15 @@ class FinalSignInAPIView(generics.GenericAPIView):
         if serializer.is_valid(raise_exception=True):
             return Response(serializer.data)
     
+class InvalidLinkView(View):
+    template_name = 'accounts_activation/invalid_activation_link.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
+    
+class SuccessPageView(View):
+    template_name = 'accounts_activation/success_page.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
+

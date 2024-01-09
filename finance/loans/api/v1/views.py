@@ -44,7 +44,7 @@ class GuarantorDecisonAPIView(generics.RetrieveUpdateAPIView):
         return loan_obj if loan_obj.guarantor_status == 'pending' else "decision-made"
     
     def get(self, request, *args, **kwargs):
-   
+ 
         if self.get_object() == "decision-made":
             return Response({
                 "success": "false",
