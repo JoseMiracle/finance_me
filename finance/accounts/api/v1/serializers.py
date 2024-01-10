@@ -44,10 +44,10 @@ class SignUpSerializer(serializers.ModelSerializer):
         return super().validate(attrs)
 
     @transaction.atomic
-    def create(self, validated_data):
-        generated_otp = generate_otp()
+    # def create(self, validated_data):
+    #     generated_otp = generate_otp()
 
-        current_site_domain = self.context["request"].META['HTTP_HOST']
+    #     current_site_domain = self.context["request"].META['HTTP_HOST']
         user = User.objects.create_user(**validated_data)
         user.is_active = False
         user.save()
