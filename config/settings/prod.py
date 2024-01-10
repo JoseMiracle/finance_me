@@ -15,7 +15,7 @@ if DEBUG == False:
     MEDIA_URL = '/media/'  # or any prefix you choose
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-ALLOWED_HOSTS = ['https://loan-me.onrender.com']
+ALLOWED_HOSTS = ['loan-me.onrender.com']
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",    
