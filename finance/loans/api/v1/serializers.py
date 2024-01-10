@@ -128,12 +128,14 @@ class RequestForLoanSerializer(serializers.ModelSerializer):
         guarantors = validated_data.pop('guarantors')
         
         with transaction.atomic():
+            current_site_domain = self.context["request"].META['HTTP_HOST']
             for guarantor in guarantors:
                loan_guarantor = LoanGuarantor.objects.create(
                     request_for_loan=request_for_loan_obj,
                     **guarantor
                     )
                request_for_guarantorship_mail(
+                    current_site_domain,
                     self.context["request"].user,
                     loan_guarantor,
                     request_for_loan_obj.id,

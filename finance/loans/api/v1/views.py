@@ -12,6 +12,9 @@ from finance.loans.models import(
 )
 from finance.loans.mails import loan_request_decision_mail
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.views import View
+from django.shortcuts import redirect
 
 
 class RequestableLoanAmountAPIView(generics.ListCreateAPIView):
@@ -97,5 +100,53 @@ class AdminApproveLoanRequestAPIView(generics.RetrieveUpdateAPIView):
                     "success": "true",
                     "message": f"loan request {loan_status}"
                 })
+
+
+class RejectRequestAsGuarantorAPIView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        loan_guarantor_id = self.kwargs["guarantor_id"]
+        print(loan_guarantor_id)
+        loan_guarantor_obj = LoanGuarantor.objects.get(id=loan_guarantor_id)
+        loan_guarantor_obj.guarantor_status = 'reject'
+        loan_guarantor_obj.save()
+        print(loan_guarantor_obj.guarantor_status)
         
+        from django.urls import reverse
+        return redirect(reverse('rejection-page', kwargs={'loan_guarantor_id': loan_guarantor_id}))
+
+
+class RejectRequestAsGuarantorPage(View):
+    template_name = 'loans/guarantor_loan_rejection.html'
+
+    def get(self, request, loan_guarantor_id):
+        print(loan_guarantor_id)
+        return render(request, self.template_name)
+
+class AcceptRequestAsGuarantorPage(View):
+    template_name = 'loans/guarantor_accept_decision.html'
+
+    def get(self, request, loan_guarantor_id):
+        loan_guarantor_obj = LoanGuarantor.objects.get(id=loan_guarantor_id)
+        context = {
+             'image': loan_guarantor_obj.request_for_loan.user.image,
+            'full_name':  f"{loan_guarantor_obj.request_for_loan.user.first_name}  {loan_guarantor_obj.request_for_loan.user.last_name}",
+            'loan_amount': loan_guarantor_obj.request_for_loan.amount 
+        }
+        return render(request, self.template_name, context=context)
     
+    def post(self, request, loan_guarantor_id):
+        loan_guarantor_obj = LoanGuarantor.objects.get(id=loan_guarantor_id)
+        loan_guarantor_obj.guarantor_nin = request.POST["nin"]
+        loan_guarantor_obj.earning_per_month = request.POST["earning_per_month"]
+        loan_guarantor_obj.occupation = request.POST["occupation"]
+        loan_guarantor_obj.image = request.FILES["guarantor_image"]
+        loan_guarantor_obj.save()
+        return redirect('guarantor-accept-page')
+    
+
+class AcceptRequestSuccessPage(View):
+    template_name = "loans/guarantor_accept_page.html"
+
+    def get(self, request):
+        return render(request, self.template_name)

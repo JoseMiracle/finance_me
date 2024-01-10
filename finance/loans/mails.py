@@ -2,13 +2,15 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
-def request_for_guarantorship_mail(user,loan_guarantor, loan_id, loan_amount):
-    context = {'user': user,
+def request_for_guarantorship_mail(current_site_domain,user,loan_guarantor, loan_id, loan_amount):
+    context = { 
+                'domain': current_site_domain,
+                'user': user,
                 'loan_amount': loan_amount,
                 'loan_guarantor':loan_guarantor,
                 'loan_id': loan_id
             }
-    html_message = render_to_string('loans/request_for_loan.html', context=context)
+    html_message = render_to_string('loans/request_for_guarantor_for_loan.html', context=context)
     plain_message = strip_tags(html_message)
 
     email = EmailMultiAlternatives(
@@ -47,7 +49,7 @@ def loan_request_decision_mail(request_for_loan_obj):
     context = {
                 'request_for_loan_obj': request_for_loan_obj,
             }
-    html_message = render_to_string('loans/loan_request_decision.html', context=context)
+    html_message = render_to_string('loans/request_for_guarantor_for_loan.html', context=context)
     plain_message = strip_tags(html_message)
 
     email = EmailMultiAlternatives(

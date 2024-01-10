@@ -11,7 +11,6 @@ from finance.accounts import constansts
 from finance.accounts.tokens import account_activation_token
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
-from django.shortcuts import redirect
 
 
 User = get_user_model()

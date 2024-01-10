@@ -46,15 +46,18 @@
         I trust this message finds you well. I am reaching out to request your assistance as a guarantor for a loan application I am pursuing. Your support in this matter would be immensely appreciated.
     </p>
 
-    <a href="http://localhost:8000/api/v1/loans/guarantor-decision/{{loan_guarantor.id}}" style="background-color: #007BFF; color: #fff; padding: 10px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px;">
-        Click the link to finish the process of being a guarantor
+    <a href="http://{{domain}}/finance-me/guarantor-accept-request/{{loan_guarantor.id}}" style="background-color: #007BFF; color: #fff; padding: 10px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px;">
+        Click the link to confirm your support as a guarantor
+    </a>
+
+    <br>
+    <a href="http://{{domain}}/api/v1/loans/reject-guarantor-request/{{loan_guarantor.id}}/" style="background-color: #dc3545; color: #fff; padding: 10px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px;">
+        Click here to reject the loan application
     </a>
 
     <br>
     <b>{{user.first_name|capfirst }} {{user.last_name|capfirst }}</b> <br>
 
-
-    <p style="font-weight: bold;">Best regards,<br>The Finance Me Team</p>`
-
+    <p style="font-weight: bold;">Best regards,<br>The Finance Me Team</p>
 </body>
 </html>

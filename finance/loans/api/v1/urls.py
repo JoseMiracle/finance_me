@@ -4,7 +4,8 @@ from finance.loans.api.v1.views import (
     RequestForLoanAPIView,
     GuarantorDecisonAPIView,
     AdminGetLoanRequestAPIView,
-    AdminApproveLoanRequestAPIView
+    AdminApproveLoanRequestAPIView,
+    RejectRequestAsGuarantorAPIView,
 )
 
 urlpatterns = [
@@ -13,4 +14,5 @@ urlpatterns = [
     path('guarantor-decision/<uuid:loan_guarantor_id>/', GuarantorDecisonAPIView.as_view(), name='guarantor_decision'),
     path('loan-requests/', AdminGetLoanRequestAPIView.as_view(), name='all-loans'),
     path('approve-loan/<uuid:loan_id>/', AdminApproveLoanRequestAPIView.as_view(), name='approve_loan'),
+    path('reject-guarantor-request/<uuid:guarantor_id>/', RejectRequestAsGuarantorAPIView.as_view(), name='reject-guarantor-request')
 ]

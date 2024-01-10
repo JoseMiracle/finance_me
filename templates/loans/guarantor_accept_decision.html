@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Request Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-color: #f0f8ff; /* Light Blue */
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #4682b4; /* Steel Blue */
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        form {
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        button {
+            background-color: #32cd32; /* Lime Green */
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .image-container {
+            text-align: center;
+        }
+
+        .loanee-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .company-name {
+            margin-top: 20px;
+            color: #4682b4; /* Steel Blue */
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+	
+
+    <div class="container">
+	<h2 style="color: #4682b4;">Loan Requestor Information</h2>
+        <div class="image-container">
+            <img src="{{image.url}}" alt="Loan Image" class="loanee-image">
+        </div>
+
+        
+        <p style="color: #333;">Loan Requestor Name: <strong> {{ full_name|upper }} </strong></p>
+        <p style="color: #333;">Loan Amount: <strong> ${{ loan_amount|upper }} </strong></p>
+        <!-- Add more loan information as needed -->
+
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- Add necessary form fields (NIN, image upload, earning per month, occupation) -->
+           <center><strong><p>Fill in the form below and Accept as a guarantor</p></strong></center>
+            <label for="nin">National Identification Number (NIN):</label>
+            <input type="text" id="nin" name="nin" required>
+
+            <label for="earning_per_month">Earning Per Month ($):</label>
+            <input type="number" id="earning_per_month" name="earning_per_month" required>
+
+            <label for="occupation">Occupation:</label>
+            <input type="text" id="occupation" name="occupation" required>
+
+            <label for="guarantor_image">Guarantor Image:</label>
+            <input type="file" id="guarantor_image" name="guarantor_image"  required>
+
+            <button type="submit">ACCEPT TO BE GUARANTOR </button>
+        </form>
+
+        <div class="company-name">
+            Finance Me
+        </div>
+    </div>
+
+</body>
+</html>
