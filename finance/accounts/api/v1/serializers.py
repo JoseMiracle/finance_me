@@ -41,7 +41,10 @@ class SignUpSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, attrs):
-        return super().validate(attrs)
+        nin = User.objects.filter(nin=attrs["nin"])
+        if nin.exists():
+            raise serializers.ValidationError("NIN exists")
+        return attrs
 
     @transaction.atomic
     def create(self, validated_data):
