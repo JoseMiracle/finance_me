@@ -3,6 +3,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
 def request_for_guarantorship_mail(current_site_domain,user,loan_guarantor, loan_id, loan_amount):
+    print(current_site_domain)
     context = { 
                 'domain': current_site_domain,
                 'user': user,

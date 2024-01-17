@@ -10,8 +10,11 @@ from finance.loans.mails import (
     request_for_guarantorship_mail,
     guarantor_decision_for_loan_mail
 )
+from finance.accounts.api.v1.serializers import UserSerializer
+
 User = get_user_model()
 from django.db.models import Q
+
 
 
 class RequestableLoanAmountSerializer(serializers.ModelSerializer):
@@ -93,6 +96,8 @@ class GuarantorSerializer(serializers.ModelSerializer):
 
 
 class RequestForLoanSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
     guarantors = serializers.ListSerializer(
         child=GuarantorSerializer(),
     )
@@ -100,6 +105,7 @@ class RequestForLoanSerializer(serializers.ModelSerializer):
         model = RequestForLoan
         fields = [
             'id',
+            'user',
             'guarantors',
             'amount',
             'loan_status'
