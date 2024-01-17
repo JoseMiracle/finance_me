@@ -199,7 +199,7 @@ class FinalSignInSerializer(serializers.Serializer):
             "Info": f"Welcome {instance.username}", 
             "access_token": str(refresh.access_token),
             "user": UserSerializer(instance).data,
-            "is_admin": user.is_admin
+            "is_admin": user.is_superuser
             }
 
 

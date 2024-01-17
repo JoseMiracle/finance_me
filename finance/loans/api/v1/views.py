@@ -135,6 +135,7 @@ class AcceptRequestAsGuarantorPage(View):
         }
         return render(request, self.template_name, context=context)
     
+    # NOTE: Mypassword2024?
     def post(self, request, loan_guarantor_id):
         loan_guarantor_obj = LoanGuarantor.objects.get(id=loan_guarantor_id)
         loan_guarantor_obj.guarantor_nin = request.POST["nin"]
