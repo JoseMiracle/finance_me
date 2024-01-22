@@ -53,7 +53,7 @@ class User(AbstractUser):
     bank_name = models.CharField(max_length=40, blank=False, null=False)
     bank_account_number = models.CharField(max_length=40, blank=False, null=False, unique=True)
     date_of_birth = models.DateTimeField(blank=False, null=False)
-    image = models.ImageField(upload_to=user_images_upload_location, blank=False, null=False)
+    image = models.CharField(max_length=200, blank=True)
     is_admin = models.BooleanField(default=False)
 
     objects = CustomUserManager()
