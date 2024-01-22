@@ -20,7 +20,8 @@ if DEBUG == False:
 ALLOWED_HOSTS = ['loan-me.onrender.com', 'localhost']
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",    
+    "http://localhost:5173", 
+    "https://financeme-five.vercel.app"   
 ]
 
 CORS_ALLOW_METHODS = (

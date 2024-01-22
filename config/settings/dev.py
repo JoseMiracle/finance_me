@@ -36,13 +36,13 @@ AUTH_USER_MODEL = 'accounts.User'
 
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.mandrillapp.com"
+EMAIL_HOST = "smtp.elasticemail.com"
 
-EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
+EMAIL_PORT = 2525
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'mimi'
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = 'admin@mail.com'
+EMAIL_HOST_USER = 'josephmiracle119@gmail.com'
+EMAIL_HOST_PASSWORD = "C31460400765899C1233AA686131149FDFFF"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 REST_FRAMEWORK = {

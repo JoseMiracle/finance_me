@@ -20,7 +20,6 @@ def account_activation_mail(user, current_site_domain, generated_otp, full_name)
         subject="Account Activation",
         to=[user.email],
         body=plain_message,
-        from_email="admin@mail.com"
     )
      email.attach_alternative(html_message, "text/html")
      email.send()

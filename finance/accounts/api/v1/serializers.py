@@ -19,7 +19,7 @@ User = get_user_model()
 
 class SignUpSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
-    image = serializers.ImageField(required=True, allow_empty_file=False)
+    # image = serializers.ImageField(required=True, allow_empty_file=False)
     nin  = serializers.CharField(min_length=10, write_only=True)
     bank_account_number = serializers.CharField(min_length=10)
 
