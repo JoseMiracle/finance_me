@@ -147,8 +147,7 @@ class RequestForLoanSerializer(serializers.ModelSerializer):
                     request_for_loan_obj.id,
                     validated_data["amount"],
                     )
-                
-            
+                           
         return request_for_loan_obj
     
     def to_representation(self, instance):

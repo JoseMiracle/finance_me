@@ -42,10 +42,10 @@ def sign_in_with_otp_activation_mail(email,full_name, generated_otp):
      email.send()
 
 
-def otp_for_sign_in(email, username, generated_otp):
-     send_mail(
-        subject="Your Sign-in OTP for Finance Me",
-        message= render_to_string('accounts/otp_for_sign_in.html', {'username': username, 'otp_code': generated_otp}),
-        recipient_list=[email],
-        from_email="admin@mail.com"
-    )
+# def otp_for_sign_in(email, username, generated_otp):
+#      send_mail(
+#         subject="Your Sign-in OTP for Finance Me",
+#         message= render_to_string('accounts/otp_for_sign_in.html', {'username': username, 'otp_code': generated_otp}),
+#         recipient_list=[email],
+#         from_email="admin@mail.com"
+#     )

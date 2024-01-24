@@ -21,7 +21,8 @@ ALLOWED_HOSTS = ['loan-me.onrender.com', 'localhost']
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173", 
-    "https://finance-me-blond.vercel.app"
+    "https://finance-me-blond.vercel.app",
+    "https://finance-me-one.vercel.app"
 ]
 
 CORS_ALLOW_METHODS = (
@@ -33,16 +34,6 @@ CORS_ALLOW_METHODS = (
     "PUT",
 )
 
-# E-MAIL SETTINGS
-
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-
-EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
-EMAIL_USE_TLS = bool(int(os.environ.get('EMAIL_USE_TLS',1)))
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = 'admin@mail.com'
 
 
 

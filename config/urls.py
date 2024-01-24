@@ -12,7 +12,7 @@ from finance.accounts.api.v1.views import InvalidLinkView, SuccessPageView
 from finance.loans.api.v1.views import (
     RejectRequestAsGuarantorPage, 
     AcceptRequestAsGuarantorPage,
-    AcceptRequestSuccessPage,
+    
 )
 
 urlpatterns = [
@@ -23,7 +23,6 @@ urlpatterns = [
     path('finance-me/success/', SuccessPageView.as_view(), name='success'),
     path('finance-me/rejection-page/<uuid:loan_guarantor_id>/', RejectRequestAsGuarantorPage.as_view(), name='rejection-page'),
     path('finance-me/guarantor-accept-request/<uuid:loan_guarantor_id>/', AcceptRequestAsGuarantorPage.as_view(), name='accept-request'),
-    path('finance-me/guarantor-accept-page/', AcceptRequestSuccessPage.as_view(), name='guarantor-accept-page')
 ]
 
 

@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.urls import reverse
 from rest_framework import generics, permissions, status
 from finance.loans.api.v1.serializers import(
     RequestableLoanAmountSerializer,
@@ -67,8 +68,12 @@ class GuarantorDecisonAPIView(generics.RetrieveUpdateAPIView):
 class AdminGetLoanRequestAPIView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = RequestForLoanSerializer
-    queryset = RequestForLoan.objects.all()
+    
 
+    def get_queryset(self):
+        queryset = RequestForLoan.objects.all().filter(status='pending')
+        return queryset
+    
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
     
@@ -87,7 +92,7 @@ class AdminApproveLoanRequestAPIView(generics.RetrieveUpdateAPIView):
     def put(self, request, *args, **kwargs):
         user = self.request.user
 
-        if user:
+        if user: # N0TE: change to user.is_admin after testing
             request_for_loan_obj = self.get_object()
             loan_status = request.data["loan_status"]
             request_for_loan_obj.loan_status = loan_status
@@ -95,7 +100,6 @@ class AdminApproveLoanRequestAPIView(generics.RetrieveUpdateAPIView):
             loan_request_decision_mail(
                 request_for_loan_obj
             )
-
             return Response({
                     "success": "true",
                     "message": f"loan request {loan_status}"
@@ -106,22 +110,21 @@ class RejectRequestAsGuarantorAPIView(APIView):
 
     def get(self, request, *args, **kwargs):
         loan_guarantor_id = self.kwargs["guarantor_id"]
-        print(loan_guarantor_id)
         loan_guarantor_obj = LoanGuarantor.objects.get(id=loan_guarantor_id)
         loan_guarantor_obj.guarantor_status = 'reject'
         loan_guarantor_obj.save()
-        print(loan_guarantor_obj.guarantor_status)
-        
-        from django.urls import reverse
         return redirect(reverse('rejection-page', kwargs={'loan_guarantor_id': loan_guarantor_id}))
-
+    
 
 class RejectRequestAsGuarantorPage(View):
     template_name = 'loans/guarantor_loan_rejection.html'
 
     def get(self, request, loan_guarantor_id):
-        print(loan_guarantor_id)
-        return render(request, self.template_name)
+        loan_guarantor_obj = LoanGuarantor.objects.get(id=loan_guarantor_id)
+        context = {
+            'loan_guarantor_obj': loan_guarantor_obj
+        }
+        return render(request, self.template_name, context= context)
 
 class AcceptRequestAsGuarantorPage(View):
     template_name = 'loans/guarantor_accept_decision.html'
@@ -135,7 +138,6 @@ class AcceptRequestAsGuarantorPage(View):
         }
         return render(request, self.template_name, context=context)
     
-    # NOTE: Mypassword2024?
     def post(self, request, loan_guarantor_id):
         loan_guarantor_obj = LoanGuarantor.objects.get(id=loan_guarantor_id)
         loan_guarantor_obj.guarantor_nin = request.POST["nin"]
@@ -143,11 +145,8 @@ class AcceptRequestAsGuarantorPage(View):
         loan_guarantor_obj.occupation = request.POST["occupation"]
         loan_guarantor_obj.image = request.FILES["guarantor_image"]
         loan_guarantor_obj.save()
-        return redirect('guarantor-accept-page')
+        context = {
+            'loan_guarantor_obj' : loan_guarantor_obj
+        }
+        return render(request,'loans/guarantor_accept_request_page.html', context=context)
     
-
-class AcceptRequestSuccessPage(View):
-    template_name = "loans/guarantor_accept_page.html"
-
-    def get(self, request):
-        return render(request, self.template_name)
