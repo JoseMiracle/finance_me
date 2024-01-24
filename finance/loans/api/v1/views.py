@@ -71,7 +71,7 @@ class AdminGetLoanRequestAPIView(generics.ListCreateAPIView):
     
 
     def get_queryset(self):
-        queryset = RequestForLoan.objects.all().filter(status='pending')
+        queryset = RequestForLoan.objects.all().filter(loan_status='pending')
         return queryset
     
     def post(self, request, *args, **kwargs):
