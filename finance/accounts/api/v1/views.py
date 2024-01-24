@@ -35,7 +35,7 @@ class VerifyAccountAPIView(generics.GenericAPIView):
         except serializers.ValidationError as e:
                 return redirect("invalid_link") 
             
-        return HttpResponseRedirect("https://finance-me-blond.vercel.app/auth")  
+        return HttpResponseRedirect("https://finance-me-one.vercel.app/auth")  
 
 class IntialSignInAPIView(generics.GenericAPIView):
     permission_classes = [permissions.AllowAny,]
