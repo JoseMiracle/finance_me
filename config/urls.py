@@ -14,6 +14,11 @@ from finance.loans.api.v1.views import (
     AcceptRequestAsGuarantorPage,
     
 )
+from drf_spectacular.views import (
+    SpectacularAPIView, 
+    SpectacularRedocView, 
+    SpectacularSwaggerView
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,6 +28,12 @@ urlpatterns = [
     path('finance-me/success/', SuccessPageView.as_view(), name='success'),
     path('finance-me/rejection-page/<uuid:loan_guarantor_id>/', RejectRequestAsGuarantorPage.as_view(), name='rejection-page'),
     path('finance-me/guarantor-accept-request/<uuid:loan_guarantor_id>/', AcceptRequestAsGuarantorPage.as_view(), name='accept-request'),
+
+    # SWAGGER ENDPOINTS
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # Optional UI:
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
 
 

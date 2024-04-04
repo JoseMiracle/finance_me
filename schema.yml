@@ -1,0 +1,7 @@
+openapi: 3.0.3
+info:
+  title: LOAN ME API
+  version: 1.0.0
+  description: Loan Management System App
+paths: {}
+components: {}
